@@ -16,7 +16,7 @@ latest_power = 0.0
 total_wh = 0.0
 last_time = time.time()
 
-PRICE_PER_KWH = 10.4789
+PRICE_PER_KWH = 12.0
 BOT_TOKEN = os.getenv("BOT_TOKEN")
 CHAT_ID = os.getenv("CHAT_ID")
 OFFSET_FILE = "offset.txt"
@@ -32,16 +32,12 @@ def get_energy_context():
     global latest_power, total_wh, PRICE_PER_KWH
     current_kwh = total_wh / 1000.0
     accumulated_bill = current_kwh * PRICE_PER_KWH
-    
-    # Calculate the estimated cost projection safely
-    projected_monthly_cost_pesos = ((latest_power * 24 * 30) / 1000.0) * PRICE_PER_KWH
-    
+    projected_monthly_bill = ((latest_power * 24 * 30) / 1000.0) * PRICE_PER_KWH
     return (
-        f"CRITICAL REAL-TIME ELECTRICAL SYSTEM DATA:\n"
-        f"1. LIVE POWER DEMAND: {latest_power:.1f} Watts (This is the current real-time load of the appliance right now)\n"
-        f"2. ACCUMULATED BILL SO FAR: PHP {accumulated_bill:.2f}\n"
-        f"3. PROJECTED 30-DAY FINANCIAL COST: PHP {projected_monthly_cost_pesos:.2f} (Estimated price if this exact load runs continuously for a month)\n"
-        f"DO NOT mix up the real-time load (Watts) with the monthly financial cost (PHP)."
+        f"REAL-TIME ELECTRICAL DATA:\n"
+        f"- Current live power draw: {latest_power:.2f} Watts\n"
+        f"- Accumulated bill right now: ₱{accumulated_bill:.2f}\n"
+        f"- Estimated 30-day monthly bill: ₱{projected_monthly_bill:.2f}\n"
     )
 
 def send_telegram(msg):

@@ -24,7 +24,7 @@ const unsigned long sendInterval = 3000; // Send telemetry to Python every 3 sec
 void setup() {
   Serial.begin(115200);
   
-  // Set up the current sensor pin (GPIO 34) and our tuned calibration factor (13.0)
+  // Set up the current sensor pin (GPIO 34) and our tuned calibration factor (15.5)
   emon1.current(34, 15.5);             
   
   // Initialize LCD
@@ -86,7 +86,9 @@ void loop() {
       // Sending standard url-encoded form values
       http.addHeader("Content-Type", "application/x-www-form-urlencoded");
       
-      // Construct the POST data matching Flask app request.values.get("power")
+      // CONVERSION FOR PYTHON: Divide by 10.0 so Python gets the true 40W 
+      // instead of the 400W sensor-multiplied loop value.
+      double truePowerForPython = power / 10.0;
       String postData = "power=" + String(power, 2);
       
       int httpResponseCode = http.POST(postData);
